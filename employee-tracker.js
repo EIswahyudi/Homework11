@@ -82,17 +82,17 @@ JOIN role r
 JOIN department d
 	ON d.id = r.department_id`
 
-  connection.query(query, function (err, res) {
-    if (err) throw err;
+    connection.query(query, function (err, res) {
+        if (err) throw err;
 
-    console.table(res);
+        console.table(res);
 
-    promptUser();
-  });
+        promptUser();
+    });
 }
 
 function viewemployeesdept() {
-    var query = `SELECT e.id, e.first_name, e.last_name, r.title, d.name
+    var query = `SELECT e.id, e.first_name, e.last_name, d.name
 FROM employee e
 JOIN role r
     ON e.role_id = r.id
@@ -100,10 +100,81 @@ JOIN department d
     ON d.id = r.department_id`
 
     connection.query(query, function (err, res) {
-    if (err) throw err;
+        if (err) throw err;
 
-    console.table(res);
+        console.table(res);
 
-    promptUser();
-  });
+        promptUser();
+    });
+}
+
+function viewemployeesmgr() {
+    var query = `SELECT e.id, e.first_name, e.last_name, e.manager
+FROM employee e
+JOIN role r
+    ON e.role_id = r.id
+JOIN department d
+    ON d.id = r.department_id`
+
+    connection.query(query, function (err, res) {
+        if (err) throw err;
+
+        console.table(res);
+
+        promptUser();
+    });
+}
+
+function addemployee() {
+    inquirer
+        .prompt([{
+            name: "first_name",
+            type: "input",
+            message: "Enter New Employee's First Name:"
+        }, {
+            name: "last_name",
+            type: "input",
+            message: "Enter New Employee's Last Name:"
+        }, {
+            name: "role_id",
+            type: "input",
+            message: "Enter New Employee's Role ID:"
+        },
+        {
+            name: "manager_id",
+            type: "input",
+            message: "Enter New Employee's Manager ID:"
+        }]
+        )
+        .then(function (answer) {
+            connection.query("INSERT INTO employee SET ?", {
+                first_name: answer.first_name,
+                last_name: answer.last_name,
+                role_id: answer.role_id,
+                manager_id: answer.manager_id
+            }, function (err, res) {
+                viewAllEmployees();
+                runSearch();
+            });
+        });
+}
+
+function removeemployee() {
+    inquirer
+        .prompt({
+            type: "list",
+            message: "Which employee do you want to remove?",
+            choices: [
+                "John Doe",
+                "Mike Chan",
+                "Ashley Rodriguez",
+                "Kevin Tupik",
+                "Malia Brown",
+                "Sarah Lourd",
+                "exit",
+            ]
+        }).then(function (answer) {
+
+        });
+        removeemployee()
 }
